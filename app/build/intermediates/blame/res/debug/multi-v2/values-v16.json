@@ -1,0 +1,38 @@
+{
+    "logs": [
+        {
+            "outputFile": "/home/zhongjihao/workspace/AVMediaCodecMP4/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v16/values-v16.xml",
+            "map": [
+                {
+                    "source": "/home/zhongjihao/.gradle/caches/transforms-1/files-1.1/support-compat-26.1.0.aar/9a33f85beaf44c87f93924e44c51bb07/res/values-v16/values-v16.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "65",
+                        "endOffsets": "116"
+                    }
+                },
+                {
+                    "source": "/home/zhongjihao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/e563f94246df2ae7359df05ac9d5740d/res/values-v16/values-v16.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "5",
+                        "endColumns": "12",
+                        "endOffsets": "223"
+                    },
+                    "to": {
+                        "startLines": "3",
+                        "startColumns": "4",
+                        "startOffsets": "121",
+                        "endLines": "6",
+                        "endColumns": "12",
+                        "endOffsets": "289"
+                    }
+                }
+            ]
+        }
+    ]
+}

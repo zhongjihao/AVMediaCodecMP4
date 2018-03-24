@@ -1,0 +1,38 @@
+
+{
+	"buildFiles" : [ "/home/zhongjihao/workspace/AVMediaCodecMP4/app/CMakeLists.txt" ],
+	"cleanCommands" : 
+	[
+		"/home/zhongjihao/android-sdk-linux/Sdk/cmake/3.6.4111459/bin/cmake --build /home/zhongjihao/workspace/AVMediaCodecMP4/app/.externalNativeBuild/cmake/release/arm64-v8a --target clean"
+	],
+	"cppFileExtensions" : [ "cpp" ],
+	"libraries" : 
+	{
+		"native-lib-Release-arm64-v8a" : 
+		{
+			"abi" : "arm64-v8a",
+			"artifactName" : "native-lib",
+			"buildCommand" : "/home/zhongjihao/android-sdk-linux/Sdk/cmake/3.6.4111459/bin/cmake --build /home/zhongjihao/workspace/AVMediaCodecMP4/app/.externalNativeBuild/cmake/release/arm64-v8a --target native-lib",
+			"buildType" : "release",
+			"files" : 
+			[
+				
+				{
+					"flags" : "  --target=aarch64-none-linux-android --gcc-toolchain=/home/zhongjihao/android-sdk-linux/Sdk/ndk-bundle/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64 --sysroot=/home/zhongjihao/android-sdk-linux/Sdk/ndk-bundle/sysroot  -Dnative_lib_EXPORTS -isystem /home/zhongjihao/android-sdk-linux/Sdk/ndk-bundle/sources/cxx-stl/gnu-libstdc++/4.9/include -isystem /home/zhongjihao/android-sdk-linux/Sdk/ndk-bundle/sources/cxx-stl/gnu-libstdc++/4.9/libs/arm64-v8a/include -isystem /home/zhongjihao/android-sdk-linux/Sdk/ndk-bundle/sources/cxx-stl/gnu-libstdc++/4.9/include/backward  -isystem /home/zhongjihao/android-sdk-linux/Sdk/ndk-bundle/sysroot/usr/include/aarch64-linux-android -D__ANDROID_API__=21 -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -Wa,--noexecstack -Wformat -Werror=format-security  -frtti -fexceptions -O2 -DNDEBUG  -fPIC    -c ",
+					"src" : "/home/zhongjihao/workspace/AVMediaCodecMP4/app/src/main/cpp/native-lib.cpp",
+					"workingDirectory" : "/home/zhongjihao/workspace/AVMediaCodecMP4/app/.externalNativeBuild/cmake/release/arm64-v8a"
+				}
+			],
+			"output" : "/home/zhongjihao/workspace/AVMediaCodecMP4/app/build/intermediates/cmake/release/obj/arm64-v8a/libnative-lib.so",
+			"toolchain" : "2182892490274192491"
+		}
+	},
+	"toolchains" : 
+	{
+		"2182892490274192491" : 
+		{
+			"cCompilerExecutable" : "/home/zhongjihao/android-sdk-linux/Sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/clang",
+			"cppCompilerExecutable" : "/home/zhongjihao/android-sdk-linux/Sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++"
+		}
+	}
+}
