@@ -1,7 +1,7 @@
 package com.example.apadmin.cameraphoto;
 
 /**
- * Created by zhongjihao on 18-2-1.
+ * Created by zhongjihao on 18-2-7.
  */
 
 import android.annotation.SuppressLint;
@@ -23,13 +23,12 @@ import static android.hardware.Camera.Parameters.PREVIEW_FPS_MAX_INDEX;
 import static android.hardware.Camera.Parameters.PREVIEW_FPS_MIN_INDEX;
 
 @SuppressLint("NewApi")
-public class CameraWrapper {
-    public static  int IMAGE_HEIGHT = 1080;
-    public static  int IMAGE_WIDTH = 1920;
-    public static  int FRAME_RATE = 30; // 30fps
-    private static final String TAG = "CameraWrapper";
-    private static final boolean DEBUG = true;    // TODO set false on release
-    private static CameraWrapper mCameraWrapper;
+public class VideoGather {
+    private static final String TAG = "VideoGather";
+    private int preWidth;
+    private int preHeight;
+    private int frameRate;
+    private static VideoGather mCameraWrapper;
 
     // 定义系统所用的照相机
     private Camera mCamera;
@@ -37,29 +36,41 @@ public class CameraWrapper {
     private Camera.Size previewSize;
     private Camera.Parameters mCameraParamters;
     private boolean mIsPreviewing = false;
-    private volatile boolean isStopRecord = false;
     private CameraPreviewCallback mCameraPreviewCallback;
 
-    private CameraWrapper() {
+    private Callback mCallback;
+    private CameraOperateCallback cameraCb;
+
+    private VideoGather() {
     }
 
-    public interface CamOpenOverCallback {
+    public interface CameraOperateCallback {
         public void cameraHasOpened();
+        public void cameraHasPreview(int width,int height,int fps);
     }
 
-    public static CameraWrapper getInstance() {
+    public interface Callback {
+        public void videoData(byte[] data);
+    }
+
+    public static VideoGather getInstance() {
         if (mCameraWrapper == null) {
-            synchronized (CameraWrapper.class) {
+            synchronized (VideoGather.class) {
                 if (mCameraWrapper == null) {
-                    mCameraWrapper = new CameraWrapper();
+                    mCameraWrapper = new VideoGather();
                 }
             }
         }
         return mCameraWrapper;
     }
 
-    public void doOpenCamera(CamOpenOverCallback callback) {
+    public void setCallback(Callback callback) {
+        mCallback = callback;
+    }
+
+    public void doOpenCamera(CameraOperateCallback callback) {
         Log.d(TAG, "====zhongjihao====Camera open....");
+        cameraCb = callback;
         if(mCamera != null)
             return;
         if (mCamera == null) {
@@ -70,7 +81,7 @@ public class CameraWrapper {
             throw new RuntimeException("Unable to open camera");
         }
         Log.d(TAG, "====zhongjihao=====Camera open over....");
-        callback.cameraHasOpened();
+        cameraCb.cameraHasOpened();
     }
 
     public void doStartPreview(Activity activity,SurfaceHolder surfaceHolder) {
@@ -85,14 +96,14 @@ public class CameraWrapper {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Log.d(TAG, "=====zhongjihao===doStartPreview()");
         mCamera.startPreview();
         mIsPreviewing = true;
+        Log.d(TAG, "=====zhongjihao===Camera Preview Started...");
+        cameraCb.cameraHasPreview(preWidth,preHeight,frameRate);
     }
 
     public void doStopCamera() {
         Log.d(TAG, "=====zhongjihao=======doStopCamera");
-       // stopRecording();
         // 如果camera不为null，释放摄像头
         if (mCamera != null) {
             mCamera.setPreviewCallbackWithBuffer(null);
@@ -130,26 +141,26 @@ public class CameraWrapper {
                     break;
                 }
             }
-            IMAGE_WIDTH = previewSize.width;
-            IMAGE_HEIGHT = previewSize.height;
+            preWidth = previewSize.width;
+            preHeight = previewSize.height;
             mCameraParamters.setPreviewSize(previewSize.width, previewSize.height);
             mCameraParamters.setFocusMode(FOCUS_MODE_AUTO);
 
             //set fps range.
-            int defminFps = 5;
-            int defmaxFps = 30;
+            int defminFps = 0;
+            int defmaxFps = 0;
             List<int[]> supportedPreviewFpsRange = mCameraParamters.getSupportedPreviewFpsRange();
             for (int[] fps : supportedPreviewFpsRange) {
-                if (fps[PREVIEW_FPS_MAX_INDEX] <= defmaxFps && fps[PREVIEW_FPS_MIN_INDEX] >= defminFps) {
+                Log.d(TAG, "=====zhongjihao=====setParameters====find fps:" + Arrays.toString(fps));
+                if (defminFps <= fps[PREVIEW_FPS_MIN_INDEX] && defmaxFps <= fps[PREVIEW_FPS_MAX_INDEX]) {
                     defminFps = fps[PREVIEW_FPS_MIN_INDEX];
                     defmaxFps = fps[PREVIEW_FPS_MAX_INDEX];
-                    //设置相机预览帧率
-                    mCameraParamters.setPreviewFpsRange(defminFps,defmaxFps);
-                    FRAME_RATE = defmaxFps;
-                    Log.d(TAG, "=====zhongjihao=====setParameters====find fps:" + Arrays.toString(fps));
-                    break;
                 }
             }
+            //设置相机预览帧率
+            Log.d(TAG, "=====zhongjihao=====setParameters====defminFps:" + defminFps+"    defmaxFps: "+defmaxFps);
+            mCameraParamters.setPreviewFpsRange(defminFps,defmaxFps);
+            frameRate = defmaxFps;
             mCameraPreviewCallback = new CameraPreviewCallback();
             mCamera.addCallbackBuffer(new byte[calculateLength(ImageFormat.NV21)]);
             mCamera.setPreviewCallbackWithBuffer(mCameraPreviewCallback);
@@ -158,7 +169,7 @@ public class CameraWrapper {
 //                parameters
 //                        .setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
 //            }
-            Log.d(TAG, "=====zhongjihao=====setParameters====IMAGE_WIDTH:" + IMAGE_WIDTH+"   IMAGE_HEIGHT: "+IMAGE_HEIGHT+"  FRAME_RATE: "+FRAME_RATE);
+            Log.d(TAG, "=====zhongjihao=====setParameters====preWidth:" + preWidth+"   preHeight: "+preHeight+"  frameRate: "+frameRate);
             mCamera.setParameters(mCameraParamters);
         }
     }
@@ -168,8 +179,7 @@ public class CameraWrapper {
                 * ImageFormat.getBitsPerPixel(format) / 8;
     }
 
-
-    public void setCameraDisplayOrientation(Activity activity,int cameraId) {
+    private void setCameraDisplayOrientation(Activity activity,int cameraId) {
         android.hardware.Camera.CameraInfo info =
                 new android.hardware.Camera.CameraInfo();
         android.hardware.Camera.getCameraInfo(cameraId, info);
@@ -202,18 +212,7 @@ public class CameraWrapper {
         mCamera.setDisplayOrientation(result);
     }
 
-    public void startRecording() {
-        isStopRecord = false;
-        MediaMuxerRunnable.startMuxer();
-    }
-
-    public void stopRecording() {
-        isStopRecord = true;
-        MediaMuxerRunnable.stopMuxer();
-    }
-
     class CameraPreviewCallback implements Camera.PreviewCallback {
-
         private CameraPreviewCallback() {
 
         }
@@ -223,8 +222,8 @@ public class CameraWrapper {
             //通过回调,拿到的data数据是原始数据
             //丢给VideoRunnable线程,使用MediaCodec进行h264编码操作
             if(data != null){
-                if(!isStopRecord)
-                    MediaMuxerRunnable.addVideoFrameData(data);
+                if(mCallback != null)
+                    mCallback.videoData(data);
                 camera.addCallbackBuffer(data);
             }
             else {
