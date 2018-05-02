@@ -1,3 +1,7 @@
 # ninja log v5
-0	159	0	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o	e0b1a24cf4c7c505
-160	445	0	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libnative-lib.so	7758b01b3344ee16
+0	53	0	CMakeFiles/yuv420pUtil.dir/src/main/jni/com_example_apadmin_cameraphoto_Yuv420POperate.cpp.o	27824b78c7d19f85
+53	80	0	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libyuv420pUtil.so	7f59300f9573bcec
+0	47	0	CMakeFiles/yuv420pUtil.dir/src/main/jni/com_example_apadmin_cameraphoto_Yuv420POperate.cpp.o	27824b78c7d19f85
+47	56	0	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libyuv420pUtil.so	7f59300f9573bcec
+0	59	0	CMakeFiles/yuv420pUtil.dir/src/main/jni/com_example_apadmin_cameraphoto_Yuv420POperate.cpp.o	27824b78c7d19f85
+59	67	0	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libyuv420pUtil.so	7f59300f9573bcec

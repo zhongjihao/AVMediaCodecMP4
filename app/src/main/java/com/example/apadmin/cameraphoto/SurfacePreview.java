@@ -9,9 +9,15 @@ import android.util.Log;
 public class SurfacePreview  implements SurfaceHolder.Callback{
     private final static String TAG = "SurfacePreview";
     private VideoGather.CameraOperateCallback mCallback;
+    private PermissionNotify listener;
 
-    public SurfacePreview(VideoGather.CameraOperateCallback cb){
+    public interface PermissionNotify{
+        boolean hasPermission();
+    }
+
+    public SurfacePreview(VideoGather.CameraOperateCallback cb,PermissionNotify listener){
         mCallback = cb;
+        this.listener = listener;
     }
 
     @Override
@@ -23,15 +29,21 @@ public class SurfacePreview  implements SurfaceHolder.Callback{
     @Override
     public void surfaceCreated(SurfaceHolder arg0) {
         Log.d(TAG, "======zhongjihao=====surfaceCreated()====");
-        // 打开摄像头
-        VideoGather.getInstance().doOpenCamera(mCallback);
+        if(listener != null){
+            if(listener.hasPermission())
+                // 打开摄像头
+                VideoGather.getInstance().doOpenCamera(mCallback);
+        }
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
         Log.d(TAG, "======zhongjihao=====surfaceChanged()====");
-        // 打开摄像头
-        VideoGather.getInstance().doOpenCamera(mCallback);
+        if(listener != null){
+            if(listener.hasPermission())
+                // 打开摄像头
+                VideoGather.getInstance().doOpenCamera(mCallback);
+        }
     }
 
 }

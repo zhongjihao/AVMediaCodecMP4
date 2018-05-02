@@ -283,6 +283,8 @@ public class AVEncoder {
     private void stopVideoEncode() {
         Log.d(TAG, "======zhongjihao======stop video 编码...");
         vEncoderEnd = true;
+        videoEncoderLoop = false;
+        videoEncoderThread.interrupt();
     }
 
     /**
@@ -333,6 +335,8 @@ public class AVEncoder {
     private void stopAudioEncode() {
         Log.d(TAG, "======zhongjihao======stop Audio 编码...");
         aEncoderEnd = true;
+        audioEncoderLoop = false;
+        audioEncoderThread.interrupt();
     }
 
     private void releaseAudioEncoder() {

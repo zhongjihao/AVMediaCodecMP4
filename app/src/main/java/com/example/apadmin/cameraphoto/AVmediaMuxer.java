@@ -44,7 +44,6 @@ public class AVmediaMuxer{
         }
         mVideoGather = VideoGather.getInstance();
         mAudioGather = AudioGather.getInstance();
-        mAudioGather.prepareAudioRecord();
         mAVEncoder = AVEncoder.newInstance();
         try {
             mediaMuxer = new MediaMuxer(outfile, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
@@ -110,6 +109,7 @@ public class AVmediaMuxer{
      * 开始音频采集
      */
     public void startAudioGather() {
+        mAudioGather.prepareAudioRecord();
         mAudioGather.startRecord();
     }
 
