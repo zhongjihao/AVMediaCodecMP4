@@ -1,4 +1,0 @@
-#Wed May 02 15:16:00 CST 2018
-base.0=/home/apadmin/Workspace/Project/AVMediaCodecMP4/app/build/intermediates/transforms/dexMerger/debug/4
-path.0=classes.dex
-renamed.0=classes.dex

@@ -150,9 +150,9 @@ public class AVEncoder {
         int bitrate = (mWidth * mHeight * 3 / 2) * 8 * fps;
         //设置比特率,由于Camera帧率太高，将编码比特率值设为bitrate，或将编码帧率设为Camera实际帧率mFps，
         // 都会导致MediaCodec调用configure失败
-        videoFormat.setInteger(MediaFormat.KEY_BIT_RATE, 640000);
+        videoFormat.setInteger(MediaFormat.KEY_BIT_RATE, bitrate);
         //设置帧率
-        videoFormat.setInteger(MediaFormat.KEY_FRAME_RATE, 30);
+        videoFormat.setInteger(MediaFormat.KEY_FRAME_RATE, fps);
         //设置颜色格式
         videoFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, mColorFormat);
         //设置关键帧的时间
@@ -234,14 +234,6 @@ public class AVEncoder {
         stopVideoEncode();
     }
 
-    /**
-     * 释放
-     */
-    public void release() {
-        releaseAudioEncoder();
-        releaseVideoEncoder();
-    }
-
     private void startVideoEncode(){
         if (vEncoder == null) {
             throw new RuntimeException("====zhongjihao=====请初始化视频编码器=====");
@@ -271,7 +263,14 @@ public class AVEncoder {
                         break;
                     }
                 }
-                vEncoder.stop();
+
+                if (vEncoder != null) {
+                    //停止视频编码器
+                    vEncoder.stop();
+                    //释放视频编码器
+                    vEncoder.release();
+                    vEncoder = null;
+                }
                 videoQueue.clear();
                 Log.d(TAG, "=====zhongjihao======Video 编码线程 退出...");
             }
@@ -283,18 +282,6 @@ public class AVEncoder {
     private void stopVideoEncode() {
         Log.d(TAG, "======zhongjihao======stop video 编码...");
         vEncoderEnd = true;
-        videoEncoderLoop = false;
-        videoEncoderThread.interrupt();
-    }
-
-    /**
-     * 释放视频编码器
-     */
-    private void releaseVideoEncoder() {
-        if (vEncoder != null) {
-            vEncoder.release();
-            vEncoder = null;
-        }
     }
 
     private void startAudioEncode() {
@@ -317,13 +304,21 @@ public class AVEncoder {
                 while (audioEncoderLoop && !Thread.interrupted()) {
                     try {
                         byte[] data = audioQueue.take();
+                        if (DEBUG) Log.d(TAG, "======zhongjihao====要编码的Audio数据大小:" + data.length);
                         encodeAudioData(data);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                         break;
                     }
                 }
-                aEncoder.stop();
+
+                if (aEncoder != null) {
+                    //停止音频编码器
+                    aEncoder.stop();
+                    //释放音频编码器
+                    aEncoder.release();
+                    aEncoder = null;
+                }
                 audioQueue.clear();
                 Log.d(TAG, "=====zhongjihao======Audio 编码线程 退出...");
             }
@@ -335,15 +330,6 @@ public class AVEncoder {
     private void stopAudioEncode() {
         Log.d(TAG, "======zhongjihao======stop Audio 编码...");
         aEncoderEnd = true;
-        audioEncoderLoop = false;
-        audioEncoderThread.interrupt();
-    }
-
-    private void releaseAudioEncoder() {
-        if (aEncoder != null) {
-            aEncoder.release();
-            aEncoder = null;
-        }
     }
 
     /**
@@ -396,12 +382,14 @@ public class AVEncoder {
             ByteBuffer[] inputBuffers = vEncoder.getInputBuffers();
             //得到当前有效的输入缓冲区的索引
             int inputBufferIndex = vEncoder.dequeueInputBuffer(TIMEOUT_USEC);
+            Log.d(TAG, "==1====zhongjihao=====Video===inputBufferIndex: " + inputBufferIndex+"  yuvLen: "+rotateYuv420.length);
             if (inputBufferIndex >= 0) { //输入缓冲区有效
-                if (DEBUG) Log.d(TAG, "======zhongjihao======inputBufferIndex: " + inputBufferIndex);
                 ByteBuffer inputBuffer = inputBuffers[inputBufferIndex];
                 inputBuffer.clear();
+                Log.d(TAG, "===2===zhongjihao=====Video===inputBufferIndex: " + inputBufferIndex+"  capacity: "+inputBuffer.capacity());
                 //往输入缓冲区写入数据
                 inputBuffer.put(rotateYuv420);
+                Log.d(TAG, "===3===zhongjihao=====Video===inputBufferIndex: " + inputBufferIndex+"  capacity: "+inputBuffer.capacity()+"  limit: "+inputBuffer.limit());
 
                 //计算pts，这个值是一定要设置的
                // long pts = new Date().getTime() * 1000 - presentationTimeUs;
@@ -413,6 +401,7 @@ public class AVEncoder {
                             pts, MediaCodec.BUFFER_FLAG_END_OF_STREAM);
                 } else {
                     //将缓冲区入队
+                    Log.d(TAG, "=====zhongjihao===Video====inputBufferIndex: "+inputBufferIndex+"  pts: "+pts);
                     vEncoder.queueInputBuffer(inputBufferIndex, 0, rotateYuv420.length,
                             pts, 0);
                 }
@@ -422,11 +411,11 @@ public class AVEncoder {
             ByteBuffer[] outputBuffers = vEncoder.getOutputBuffers();
             //拿到输出缓冲区的索引
             int outputBufferIndex = vEncoder.dequeueOutputBuffer(vBufferInfo, TIMEOUT_USEC);
+            Log.d(TAG, "=====zhongjihao===Video====outputBufferIndex: "+outputBufferIndex);
             if (outputBufferIndex == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
-                Log.d(TAG, "=====zhongjihao====INFO_OUTPUT_BUFFERS_CHANGED===");
                 outputBuffers = vEncoder.getOutputBuffers();
             } else if (outputBufferIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
-                Log.d(TAG, "=====zhongjihao====INFO_OUTPUT_FORMAT_CHANGED===");
+                Log.d(TAG, "=====zhongjihao====Video===INFO_OUTPUT_FORMAT_CHANGED===");
                 MediaFormat newFormat = vEncoder.getOutputFormat();
                 if (null != mCallback && !vEncoderEnd) {
                     Log.d(TAG,"======zhongjihao======添加视轨 INFO_OUTPUT_FORMAT_CHANGED " + newFormat.toString());
@@ -434,7 +423,6 @@ public class AVEncoder {
                 }
             }
             while (outputBufferIndex >= 0) {
-                Log.d(TAG, "=====zhongjihao====outputBufferIndex: " + outputBufferIndex);
                 //数据已经编码成H264格式
                 //outputBuffer保存的就是H264数据
                 ByteBuffer outputBuffer = outputBuffers[outputBufferIndex];
@@ -446,7 +434,7 @@ public class AVEncoder {
                 if ((vBufferInfo.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0) {
                     // The codec config data was pulled out and fed to the muxer when we got
                     // the INFO_OUTPUT_FORMAT_CHANGED status.  Ignore it.
-                    Log.d(TAG, "======zhongjihao=======ignoring BUFFER_FLAG_CODEC_CONFIG");
+                    Log.d(TAG, "======zhongjihao====Video====ignoring BUFFER_FLAG_CODEC_CONFIG");
                     vBufferInfo.size = 0;
                 }
 
@@ -470,8 +458,8 @@ public class AVEncoder {
                     return;
                 }
             }
-        } catch (Throwable t) {
-            Log.e(TAG, "====zhongjihao=====encodeVideoData=====error: " + t.getMessage());
+        } catch (Exception t) {
+            Log.e(TAG, "====zhongjihao=====encodeVideoData=====error: " + t.toString());
         }
     }
 
@@ -482,7 +470,7 @@ public class AVEncoder {
             //得到当前有效的输入缓冲区的索引
             int inputBufferIndex = aEncoder.dequeueInputBuffer(TIMEOUT_USEC);
             if (inputBufferIndex >= 0) { //输入缓冲区有效
-                if (DEBUG) Log.d(TAG, "======zhongjihao======inputBufferIndex: " + inputBufferIndex);
+                if (DEBUG) Log.d(TAG, "======zhongjihao====Audio===inputBufferIndex: " + inputBufferIndex);
                 ByteBuffer inputBuffer = inputBuffers[inputBufferIndex];
                 inputBuffer.clear();
                 //往输入缓冲区写入数据
@@ -506,11 +494,11 @@ public class AVEncoder {
             ByteBuffer[] outputBuffers = aEncoder.getOutputBuffers();
             //拿到输出缓冲区的索引
             int outputBufferIndex = aEncoder.dequeueOutputBuffer(aBufferInfo, TIMEOUT_USEC);
+            Log.d(TAG, "=====zhongjihao====Audio======outputBufferIndex: "+outputBufferIndex);
             if (outputBufferIndex == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED){
-                Log.d(TAG, "=====zhongjihao====INFO_OUTPUT_BUFFERS_CHANGED===");
                 outputBuffers = aEncoder.getOutputBuffers();
             }else if (outputBufferIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED){
-                Log.d(TAG, "=====zhongjihao====INFO_OUTPUT_FORMAT_CHANGED===");
+                Log.d(TAG, "=====zhongjihao======Audio===INFO_OUTPUT_FORMAT_CHANGED===");
                 //加入音轨的时刻,一定要等编码器设置编码格式完成后，再将它加入到混合器中，
                 // 编码器编码格式设置完成的标志是dequeueOutputBuffer得到返回值为MediaCodec.INFO_OUTPUT_FORMAT_CHANGED
                 final MediaFormat newformat = aEncoder.getOutputFormat(); // API >= 16
@@ -520,7 +508,6 @@ public class AVEncoder {
                 }
             }
             while (outputBufferIndex >= 0) {
-                Log.d(TAG, "=====zhongjihao====outputBufferIndex: " + outputBufferIndex);
                 //数据已经编码成AAC格式
                 //outputBuffer保存的就是AAC数据
                 ByteBuffer outputBuffer = outputBuffers[outputBufferIndex];
@@ -534,7 +521,7 @@ public class AVEncoder {
                     // but MediaCodec#getOutputFormat can not call here(because INFO_OUTPUT_FORMAT_CHANGED don't come yet)
                     // therefor we should expand and prepare output format from buffer data.
                     // This sample is for API>=18(>=Android 4.3), just ignore this flag here
-                    Log.d(TAG, "======zhongjihao======drain:BUFFER_FLAG_CODEC_CONFIG===");
+                    Log.d(TAG, "======zhongjihao====Audio====drain:BUFFER_FLAG_CODEC_CONFIG===");
                     aBufferInfo.size = 0;
                 }
 
@@ -557,8 +544,8 @@ public class AVEncoder {
                     return;
                 }
             }
-        } catch (Throwable t) {
-            Log.e(TAG, "=====zhongjihao=====encodeAudioData=====error: " + t.getMessage());
+        } catch (Exception t) {
+            Log.e(TAG, "=====zhongjihao=====encodeAudioData=====error: " + t.toString());
         }
     }
 }

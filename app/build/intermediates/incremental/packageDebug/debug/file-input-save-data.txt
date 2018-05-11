@@ -1,31 +1,23 @@
 #Internal package file, do not edit.
-#Wed May 02 15:16:00 CST 2018
-2.base=/home/apadmin/Workspace/Project/AVMediaCodecMP4/app/build/intermediates/transforms/dexMerger/debug/15
-5.set=NATIVE_RESOURCE
-0.path=classes.dex
+#Fri May 11 17:15:38 CST 2018
+2.base=/home/apadmin/Workspace/Project/AVMediaCodecMP4/app/build/intermediates/transforms/stripDebugSymbol/debug/0
+0.path=lib/armeabi-v7a/libyuv420pUtil.so
 2.baseType=DIRECTORY
-3.base=/home/apadmin/Workspace/Project/AVMediaCodecMP4/app/build/intermediates/transforms/dexMerger/debug/14
-2.set=DEX
-1.path=classes.dex
-4.base=/home/apadmin/Workspace/Project/AVMediaCodecMP4/app/build/intermediates/transforms/dexMerger/debug/16
-count=7
-5.baseType=DIRECTORY
-2.path=classes.dex
-5.base=/home/apadmin/Workspace/Project/AVMediaCodecMP4/app/build/intermediates/transforms/stripDebugSymbol/debug/0
-4.set=DEX
+3.base=/home/apadmin/Workspace/Project/AVMediaCodecMP4/app/build/intermediates/transforms/dexMerger/debug/0
+2.set=NATIVE_RESOURCE
+1.path=lib/arm64-v8a/libyuv420pUtil.so
+4.base=/home/apadmin/Workspace/Project/AVMediaCodecMP4/app/build/intermediates/transforms/stripDebugSymbol/debug/0
+count=5
+2.path=lib/x86_64/libyuv420pUtil.so
+4.set=NATIVE_RESOURCE
 3.path=classes.dex
-6.base=/home/apadmin/Workspace/Project/AVMediaCodecMP4/app/build/intermediates/transforms/dexMerger/debug/11
 3.baseType=DIRECTORY
-1.set=DEX
-4.path=classes.dex
-6.set=DEX
+1.set=NATIVE_RESOURCE
+4.path=lib/x86/libyuv420pUtil.so
 1.baseType=DIRECTORY
-6.baseType=DIRECTORY
-5.path=lib/arm64-v8a/libyuv420pUtil.so
-0.base=/home/apadmin/Workspace/Project/AVMediaCodecMP4/app/build/intermediates/transforms/dexMerger/debug/13
+0.base=/home/apadmin/Workspace/Project/AVMediaCodecMP4/app/build/intermediates/transforms/stripDebugSymbol/debug/0
 0.baseType=DIRECTORY
 3.set=DEX
-6.path=classes.dex
-1.base=/home/apadmin/Workspace/Project/AVMediaCodecMP4/app/build/intermediates/transforms/dexMerger/debug/12
+1.base=/home/apadmin/Workspace/Project/AVMediaCodecMP4/app/build/intermediates/transforms/stripDebugSymbol/debug/0
 4.baseType=DIRECTORY
-0.set=DEX
+0.set=NATIVE_RESOURCE

@@ -42,15 +42,18 @@ public class AVmediaMuxer{
         if (loop) {
             throw new RuntimeException("====zhongjihao====MediaMuxer线程已经启动===");
         }
+        try {
+            Log.d(TAG, "====zhongjihao=====创建媒体混合器 start...");
+            mediaMuxer = new MediaMuxer(outfile, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+            Log.d(TAG, "====zhongjihao=====创建媒体混合器 done...");
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.e(TAG, "====zhongjihao=====创建媒体混合器 error: "+e.toString());
+        }
         mVideoGather = VideoGather.getInstance();
         mAudioGather = AudioGather.getInstance();
         mAVEncoder = AVEncoder.newInstance();
-        try {
-            mediaMuxer = new MediaMuxer(outfile, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
+        Log.d(TAG, "====zhongjihao======设置回调监听===");
         setListener();
         workThread = new Thread("mediaMuxer-thread") {
             @Override
@@ -124,12 +127,10 @@ public class AVmediaMuxer{
      * 释放
      */
     public void release() {
-        mAVEncoder.release();
         mAudioGather.release();
         loop = false;
         if (workThread != null) {
             workThread.interrupt();
-            workThread = null;
         }
     }
 
@@ -149,12 +150,12 @@ public class AVmediaMuxer{
     private void stopMediaMuxer() {
         if (!isMediaMuxerStart)
             return;
-        Log.d(TAG, "====zhongjihao====停止媒体混合器=====");
         mediaMuxer.stop();
         mediaMuxer.release();
         isMediaMuxerStart = false;
         isAudioAdd = false;
         isVideoAdd = false;
+        Log.d(TAG, "====zhongjihao====停止媒体混合器=====");
     }
 
     /**
@@ -212,15 +213,19 @@ public class AVmediaMuxer{
             }
 
             @Override
-            public void outMediaFormat(final int trackIndex,MediaFormat mediaFormat){
+            public void outMediaFormat(final int trackIndex, MediaFormat mediaFormat) {
                 if (trackIndex == TRACK_AUDIO) {
-                    Log.d(TAG, "====zhongjihao===addAudioMediaFormat=======");
-                    audioTrackIndex = mediaMuxer.addTrack(mediaFormat);
-                    isAudioAdd = true;
+                    Log.d(TAG, "====zhongjihao===addAudioMediaFormat======mediaMuxer: " + (mediaMuxer != null));
+                    if (mediaMuxer != null) {
+                        audioTrackIndex = mediaMuxer.addTrack(mediaFormat);
+                        isAudioAdd = true;
+                    }
                 } else if (trackIndex == TRACK_VIDEO) {
-                    Log.d(TAG, "====zhongjihao===addVideoMediaFormat=======");
-                    videoTrackIndex = mediaMuxer.addTrack(mediaFormat);
-                    isVideoAdd = true;
+                    Log.d(TAG, "====zhongjihao===addVideoMediaFormat=======mediaMuxer: " + (mediaMuxer != null));
+                    if (mediaMuxer != null) {
+                        videoTrackIndex = mediaMuxer.addTrack(mediaFormat);
+                        isVideoAdd = true;
+                    }
                 }
                 startMediaMuxer();
             }
