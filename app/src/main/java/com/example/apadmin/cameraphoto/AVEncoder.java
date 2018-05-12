@@ -148,10 +148,9 @@ public class AVEncoder {
         videoFormat = MediaFormat.createVideoFormat(VIDEO_MIME_TYPE,
                 this.mHeight, this.mWidth);
         int bitrate = (mWidth * mHeight * 3 / 2) * 8 * fps;
-        //设置比特率,由于Camera帧率太高，将编码比特率值设为bitrate，或将编码帧率设为Camera实际帧率mFps，
-        // 都会导致MediaCodec调用configure失败
+        //设置比特率,将编码比特率值设为bitrate
         videoFormat.setInteger(MediaFormat.KEY_BIT_RATE, bitrate);
-        //设置帧率
+        //设置帧率,将编码帧率设为Camera实际帧率mFps
         videoFormat.setInteger(MediaFormat.KEY_FRAME_RATE, fps);
         //设置颜色格式
         videoFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, mColorFormat);
