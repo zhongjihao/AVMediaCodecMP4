@@ -11,10 +11,6 @@
     <uses-feature android:name="android.hardware.Camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
-    <uses-sdk
-        android:minSdkVersion="23"
-        android:targetSdkVersion="25" />
-
 
     <application
         android:allowBackup="true"
