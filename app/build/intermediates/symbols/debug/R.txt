@@ -829,8 +829,9 @@ int string abc_shareactionprovider_share_with 0x7f0b001c
 int string abc_shareactionprovider_share_with_application 0x7f0b001d
 int string abc_toolbar_collapse_description 0x7f0b001e
 int string app_name 0x7f0b001f
-int string search_menu_title 0x7f0b0020
-int string status_bar_notification_info_overflow 0x7f0b0021
+int string no_permission_tips 0x7f0b0020
+int string search_menu_title 0x7f0b0021
+int string status_bar_notification_info_overflow 0x7f0b0022
 int style AlertDialog_AppCompat 0x7f0c0000
 int style AlertDialog_AppCompat_Light 0x7f0c0001
 int style Animation_AppCompat_Dialog 0x7f0c0002

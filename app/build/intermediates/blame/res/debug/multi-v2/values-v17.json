@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "/home/zhongjihao/workspace/AVMediaCodecMP4/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v17/values-v17.xml",
+            "outputFile": "/home/apadmin/Workspace/Project/AVMediaCodecMP4/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v17/values-v17.xml",
             "map": [
                 {
-                    "source": "/home/zhongjihao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/e563f94246df2ae7359df05ac9d5740d/res/values-v17/values-v17.xml",
+                    "source": "/home/apadmin/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/b7a79d662b4e2d1e3b15f0c150780c85/res/values-v17/values-v17.xml",
                     "from": {
                         "startLines": "2,5,9,12,15,18,22,26,29,32,35,39,42,46",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4",

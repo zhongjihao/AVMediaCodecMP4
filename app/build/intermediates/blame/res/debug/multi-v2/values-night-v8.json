@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "/home/zhongjihao/workspace/AVMediaCodecMP4/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-night-v8/values-night-v8.xml",
+            "outputFile": "/home/apadmin/Workspace/Project/AVMediaCodecMP4/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-night-v8/values-night-v8.xml",
             "map": [
                 {
-                    "source": "/home/zhongjihao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/e563f94246df2ae7359df05ac9d5740d/res/values-night-v8/values-night-v8.xml",
+                    "source": "/home/apadmin/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/b7a79d662b4e2d1e3b15f0c150780c85/res/values-night-v8/values-night-v8.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8",
                         "startColumns": "4,4,4,4,4,4,4",

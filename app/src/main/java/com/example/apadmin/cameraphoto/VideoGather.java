@@ -6,8 +6,10 @@ package com.example.apadmin.cameraphoto;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -40,6 +42,7 @@ public class VideoGather {
 
     private Callback mCallback;
     private CameraOperateCallback cameraCb;
+    private Context mContext;
 
     private VideoGather() {
     }
@@ -88,6 +91,7 @@ public class VideoGather {
         if (mIsPreviewing) {
             return;
         }
+        mContext = activity;
         setCameraDisplayOrientation(activity, Camera.CameraInfo.CAMERA_FACING_BACK);
         setCameraParamter();
         try {
@@ -114,6 +118,7 @@ public class VideoGather {
             mCamera.release();
             mCamera = null;
         }
+        mContext = null;
     }
 
     private void setCameraParamter() {
@@ -134,11 +139,15 @@ public class VideoGather {
                 }
             });
 
+            DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
+            Log.d(TAG, "====zhongjihao=====Screen width=" + dm.widthPixels + ", height=" + dm.heightPixels);
             for (Camera.Size size : supportedPreviewSizes) {
-                if (size.width >= 240 && size.width <= 720) {
-                    previewSize = size;
-                    Log.d(TAG, "====zhongjihao=====select preview size width=" + size.width + ",height=" + size.height);
-                    break;
+                if (size.width >= dm.heightPixels && size.height >= dm.widthPixels) {
+                    if ((1.0f * size.width / size.height) == (1.0f * dm.heightPixels / dm.widthPixels)) {
+                        previewSize = size;
+                        Log.d(TAG, "====zhongjihao=====select preview size width=" + size.width + ",height=" + size.height);
+                        break;
+                    }
                 }
             }
             preWidth = previewSize.width;
@@ -160,7 +169,7 @@ public class VideoGather {
             //设置相机预览帧率
             Log.d(TAG, "=====zhongjihao=====setParameters====defminFps:" + defminFps+"    defmaxFps: "+defmaxFps);
             mCameraParamters.setPreviewFpsRange(defminFps,defmaxFps);
-            frameRate = defmaxFps;
+            frameRate = defmaxFps / 1000;
             mCameraPreviewCallback = new CameraPreviewCallback();
             mCamera.addCallbackBuffer(new byte[calculateLength(ImageFormat.NV21)]);
             mCamera.setPreviewCallbackWithBuffer(mCameraPreviewCallback);

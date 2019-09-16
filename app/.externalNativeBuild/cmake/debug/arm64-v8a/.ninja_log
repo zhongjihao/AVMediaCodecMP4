@@ -1,3 +1,13 @@
 # ninja log v5
-0	1364	0	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o	836c1c2395f1f53f
-1364	1724	0	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libnative-lib.so	ef68a9d55d6d381b
+0	74	0	CMakeFiles/yuv420pUtil.dir/src/main/jni/com_example_apadmin_cameraphoto_Yuv420POperate.cpp.o	485ef88840ef17a3
+74	108	0	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libyuv420pUtil.so	8c042bd605ca9e51
+0	27	0	CMakeFiles/yuv420pUtil.dir/src/main/jni/com_example_apadmin_cameraphoto_Yuv420POperate.cpp.o	485ef88840ef17a3
+27	37	0	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libyuv420pUtil.so	8c042bd605ca9e51
+1	30	0	CMakeFiles/yuv420pUtil.dir/src/main/jni/com_example_apadmin_cameraphoto_Yuv420POperate.cpp.o	485ef88840ef17a3
+30	40	0	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libyuv420pUtil.so	8c042bd605ca9e51
+0	30	0	CMakeFiles/yuv420pUtil.dir/src/main/jni/com_example_apadmin_cameraphoto_Yuv420POperate.cpp.o	485ef88840ef17a3
+30	39	0	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libyuv420pUtil.so	8c042bd605ca9e51
+0	78	0	CMakeFiles/yuv420pUtil.dir/src/main/jni/com_example_apadmin_cameraphoto_Yuv420POperate.cpp.o	485ef88840ef17a3
+78	87	0	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libyuv420pUtil.so	8c042bd605ca9e51
+0	27	0	CMakeFiles/yuv420pUtil.dir/src/main/jni/com_example_apadmin_cameraphoto_Yuv420POperate.cpp.o	485ef88840ef17a3
+27	37	0	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libyuv420pUtil.so	8c042bd605ca9e51

@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "/home/zhongjihao/workspace/AVMediaCodecMP4/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v16/values-v16.xml",
+            "outputFile": "/home/apadmin/Workspace/Project/AVMediaCodecMP4/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v16/values-v16.xml",
             "map": [
                 {
-                    "source": "/home/zhongjihao/.gradle/caches/transforms-1/files-1.1/support-compat-26.1.0.aar/9a33f85beaf44c87f93924e44c51bb07/res/values-v16/values-v16.xml",
+                    "source": "/home/apadmin/.gradle/caches/transforms-1/files-1.1/support-compat-26.1.0.aar/1f95a506d7ad2124602f24166d658fd5/res/values-v16/values-v16.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -14,7 +14,7 @@
                     }
                 },
                 {
-                    "source": "/home/zhongjihao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/e563f94246df2ae7359df05ac9d5740d/res/values-v16/values-v16.xml",
+                    "source": "/home/apadmin/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/b7a79d662b4e2d1e3b15f0c150780c85/res/values-v16/values-v16.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

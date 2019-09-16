@@ -1,4 +1,4 @@
-# Install script for directory: /home/zhongjihao/workspace/AVMediaCodecMP4/app
+# Install script for directory: /home/apadmin/Workspace/Project/AVMediaCodecMP4/app
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/zhongjihao/workspace/AVMediaCodecMP4/app/.externalNativeBuild/cmake/debug/arm64-v8a/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/apadmin/Workspace/Project/AVMediaCodecMP4/app/.externalNativeBuild/cmake/debug/arm64-v8a/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

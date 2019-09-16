@@ -1,38 +1,38 @@
 
 {
-	"buildFiles" : [ "/home/zhongjihao/workspace/AVMediaCodecMP4/app/CMakeLists.txt" ],
+	"buildFiles" : [ "/home/apadmin/Workspace/Project/AVMediaCodecMP4/app/CMakeLists.txt" ],
 	"cleanCommands" : 
 	[
-		"/home/zhongjihao/android-sdk-linux/Sdk/cmake/3.6.4111459/bin/cmake --build /home/zhongjihao/workspace/AVMediaCodecMP4/app/.externalNativeBuild/cmake/debug/armeabi-v7a --target clean"
+		"/home/apadmin/Android/Sdk/cmake/3.6.4111459/bin/cmake --build /home/apadmin/Workspace/Project/AVMediaCodecMP4/app/.externalNativeBuild/cmake/debug/armeabi-v7a --target clean"
 	],
 	"cppFileExtensions" : [ "cpp" ],
 	"libraries" : 
 	{
-		"native-lib-Debug-armeabi-v7a" : 
+		"yuv420pUtil-Debug-armeabi-v7a" : 
 		{
 			"abi" : "armeabi-v7a",
-			"artifactName" : "native-lib",
-			"buildCommand" : "/home/zhongjihao/android-sdk-linux/Sdk/cmake/3.6.4111459/bin/cmake --build /home/zhongjihao/workspace/AVMediaCodecMP4/app/.externalNativeBuild/cmake/debug/armeabi-v7a --target native-lib",
+			"artifactName" : "yuv420pUtil",
+			"buildCommand" : "/home/apadmin/Android/Sdk/cmake/3.6.4111459/bin/cmake --build /home/apadmin/Workspace/Project/AVMediaCodecMP4/app/.externalNativeBuild/cmake/debug/armeabi-v7a --target yuv420pUtil",
 			"buildType" : "debug",
 			"files" : 
 			[
 				
 				{
-					"flags" : "  --target=armv7-none-linux-androideabi --gcc-toolchain=/home/zhongjihao/android-sdk-linux/Sdk/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64 --sysroot=/home/zhongjihao/android-sdk-linux/Sdk/ndk-bundle/sysroot  -Dnative_lib_EXPORTS -isystem /home/zhongjihao/android-sdk-linux/Sdk/ndk-bundle/sources/cxx-stl/gnu-libstdc++/4.9/include -isystem /home/zhongjihao/android-sdk-linux/Sdk/ndk-bundle/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a/include -isystem /home/zhongjihao/android-sdk-linux/Sdk/ndk-bundle/sources/cxx-stl/gnu-libstdc++/4.9/include/backward  -isystem /home/zhongjihao/android-sdk-linux/Sdk/ndk-bundle/sysroot/usr/include/arm-linux-androideabi -D__ANDROID_API__=18 -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16 -fno-integrated-as -mthumb -Wa,--noexecstack -Wformat -Werror=format-security  -frtti -fexceptions -O0 -fno-limit-debug-info  -fPIC    -c ",
-					"src" : "/home/zhongjihao/workspace/AVMediaCodecMP4/app/src/main/cpp/native-lib.cpp",
-					"workingDirectory" : "/home/zhongjihao/workspace/AVMediaCodecMP4/app/.externalNativeBuild/cmake/debug/armeabi-v7a"
+					"flags" : "  --target=armv7-none-linux-androideabi --gcc-toolchain=/home/apadmin/Android/Sdk/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64 --sysroot=/home/apadmin/Android/Sdk/ndk-bundle/sysroot  -Dyuv420pUtil_EXPORTS -isystem /home/apadmin/Android/Sdk/ndk-bundle/sources/cxx-stl/gnu-libstdc++/4.9/include -isystem /home/apadmin/Android/Sdk/ndk-bundle/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a/include -isystem /home/apadmin/Android/Sdk/ndk-bundle/sources/cxx-stl/gnu-libstdc++/4.9/include/backward  -isystem /home/apadmin/Android/Sdk/ndk-bundle/sysroot/usr/include/arm-linux-androideabi -D__ANDROID_API__=18 -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16 -fno-integrated-as -mthumb -Wa,--noexecstack -Wformat -Werror=format-security  -frtti -fexceptions -O0 -fno-limit-debug-info  -fPIC    -c ",
+					"src" : "/home/apadmin/Workspace/Project/AVMediaCodecMP4/app/src/main/jni/com_example_apadmin_cameraphoto_Yuv420POperate.cpp",
+					"workingDirectory" : "/home/apadmin/Workspace/Project/AVMediaCodecMP4/app/.externalNativeBuild/cmake/debug/armeabi-v7a"
 				}
 			],
-			"output" : "/home/zhongjihao/workspace/AVMediaCodecMP4/app/build/intermediates/cmake/debug/obj/armeabi-v7a/libnative-lib.so",
-			"toolchain" : "2182892490274192491"
+			"output" : "/home/apadmin/Workspace/Project/AVMediaCodecMP4/app/build/intermediates/cmake/debug/obj/armeabi-v7a/libyuv420pUtil.so",
+			"toolchain" : "16567285209301555447"
 		}
 	},
 	"toolchains" : 
 	{
-		"2182892490274192491" : 
+		"16567285209301555447" : 
 		{
-			"cCompilerExecutable" : "/home/zhongjihao/android-sdk-linux/Sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/clang",
-			"cppCompilerExecutable" : "/home/zhongjihao/android-sdk-linux/Sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++"
+			"cCompilerExecutable" : "/home/apadmin/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/clang",
+			"cppCompilerExecutable" : "/home/apadmin/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++"
 		}
 	}
 }
