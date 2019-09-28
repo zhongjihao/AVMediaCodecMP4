@@ -93,7 +93,7 @@ public class VideoGather {
         }
         mContext = activity;
         setCameraDisplayOrientation(activity, Camera.CameraInfo.CAMERA_FACING_BACK);
-        setCameraParamter();
+        setCameraParamter(surfaceHolder);
         try {
             // 通过SurfaceView显示取景画面
             mCamera.setPreviewDisplay(surfaceHolder);
@@ -102,6 +102,12 @@ public class VideoGather {
         }
         mCamera.startPreview();
         mIsPreviewing = true;
+        mCamera.autoFocus(new Camera.AutoFocusCallback() {
+            @Override
+            public void onAutoFocus(boolean success, Camera camera) {
+                Log.d(TAG, "=====zhongjihao===onAutoFocus----->success: "+success);
+            }
+        });
         Log.d(TAG, "=====zhongjihao===Camera Preview Started...");
         cameraCb.cameraHasPreview(preWidth,preHeight,frameRate);
     }
@@ -121,13 +127,14 @@ public class VideoGather {
         mContext = null;
     }
 
-    private void setCameraParamter() {
+    private void setCameraParamter(SurfaceHolder surfaceHolder) {
         if (!mIsPreviewing && mCamera != null) {
             mCameraParamters = mCamera.getParameters();
+            List<Integer> previewFormats = mCameraParamters.getSupportedPreviewFormats();
+            for(int i=0;i<previewFormats.size();i++){
+                Log.d(TAG,"support preview format : "+previewFormats.get(i));
+            }
             mCameraParamters.setPreviewFormat(ImageFormat.NV21);
-            mCameraParamters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-            mCameraParamters.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_AUTO);
-            mCameraParamters.setSceneMode(Camera.Parameters.SCENE_MODE_AUTO);
             // Set preview size.
             List<Camera.Size> supportedPreviewSizes = mCameraParamters.getSupportedPreviewSizes();
             Collections.sort(supportedPreviewSizes, new Comparator<Camera.Size>() {
@@ -153,7 +160,6 @@ public class VideoGather {
             preWidth = previewSize.width;
             preHeight = previewSize.height;
             mCameraParamters.setPreviewSize(previewSize.width, previewSize.height);
-            mCameraParamters.setFocusMode(FOCUS_MODE_AUTO);
 
             //set fps range.
             int defminFps = 0;
@@ -170,22 +176,24 @@ public class VideoGather {
             Log.d(TAG, "=====zhongjihao=====setParameters====defminFps:" + defminFps+"    defmaxFps: "+defmaxFps);
             mCameraParamters.setPreviewFpsRange(defminFps,defmaxFps);
             frameRate = defmaxFps / 1000;
+            surfaceHolder.setFixedSize(previewSize.width, previewSize.height);
             mCameraPreviewCallback = new CameraPreviewCallback();
-            mCamera.addCallbackBuffer(new byte[calculateLength(ImageFormat.NV21)]);
+            mCamera.addCallbackBuffer(new byte[previewSize.width * previewSize.height*3/2]);
             mCamera.setPreviewCallbackWithBuffer(mCameraPreviewCallback);
-//            List<String> focusModes = parameters.getSupportedFocusModes();
-//            if (focusModes.contains("continuous-video")) {
-//                parameters
-//                        .setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-//            }
+            List<String> focusModes = mCameraParamters.getSupportedFocusModes();
+            for (String focusMode : focusModes){//检查支持的对焦
+                Log.d(TAG, "=====zhongjihao=====setParameters====focusMode:" + focusMode);
+                if (focusMode.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)){
+                    mCameraParamters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+                }else if (focusMode.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)){
+                    mCameraParamters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                }else if(focusMode.contains(Camera.Parameters.FOCUS_MODE_AUTO)){
+                    mCameraParamters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                }
+            }
             Log.d(TAG, "=====zhongjihao=====setParameters====preWidth:" + preWidth+"   preHeight: "+preHeight+"  frameRate: "+frameRate);
             mCamera.setParameters(mCameraParamters);
         }
-    }
-
-    private int calculateLength(int format) {
-        return previewSize.width * previewSize.height
-                * ImageFormat.getBitsPerPixel(format) / 8;
     }
 
     private void setCameraDisplayOrientation(Activity activity,int cameraId) {
@@ -228,6 +236,7 @@ public class VideoGather {
 
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
+            Camera.Size size = camera.getParameters().getPreviewSize();
             //通过回调,拿到的data数据是原始数据
             //丢给VideoRunnable线程,使用MediaCodec进行h264编码操作
             if(data != null){
@@ -236,7 +245,7 @@ public class VideoGather {
                 camera.addCallbackBuffer(data);
             }
             else {
-                camera.addCallbackBuffer(new byte[calculateLength(ImageFormat.NV21)]);
+                camera.addCallbackBuffer(new byte[size.width * size.height *3/2]);
             }
         }
     }

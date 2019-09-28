@@ -9,6 +9,7 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -26,17 +27,22 @@ public class AVEncoder {
     private static final String VIDEO_MIME_TYPE = "video/avc"; // H.264 Advanced Video
     // I-frames
     private static final int IFRAME_INTERVAL = 5; // 10 between
-    //转成后的数据
-    private byte[] yuv420;
-    //旋转后的数据
-    private byte[] rotateYuv420;
+    //预览格式转换后的数据
+    private byte[] yuvBuffer;
+    //旋转后的数据和分辨率
+    private byte[] rotateYuvBuffer;
+    private int[] outWidth = new int[1];
+    private int[] outHeight = new int[1];
+
+    //Camera预览分辨率和帧率
     private int mWidth;
     private int mHeight;
     private int mFps;
     private MediaCodec vEncoder;
     private MediaFormat videoFormat;
-    private int mColorFormat;
+    private int mColorFormat = 0;
     private MediaCodec.BufferInfo vBufferInfo;
+    private ArrayList<Integer> supportColorFormatList;
     private Thread videoEncoderThread;
     private volatile boolean videoEncoderLoop = false;
     private volatile boolean vEncoderEnd = false;
@@ -125,11 +131,12 @@ public class AVEncoder {
         this.mHeight = height;
         mFps = fps;
         videoQueue = new LinkedBlockingQueue<>();
-//        rotateYuv420 = new byte[this.mWidth * this.mHeight * 3 / 2];
-//        yuv420 = new byte[this.mWidth * this.mHeight * 3 / 2];
-        yuv420 = new byte[getYuvBuffer(mWidth, mHeight)];
-        rotateYuv420 = new byte[getYuvBuffer(mWidth, mHeight)];
-        Log.d(TAG, "===zhongjihao===initVideoEncoder====width: "+mWidth+"  height: "+mHeight+"  bufferSize: "+getYuvBuffer(mWidth, mHeight));
+        supportColorFormatList = new ArrayList<>();
+        rotateYuvBuffer = new byte[this.mWidth * this.mHeight * 3 / 2];
+        yuvBuffer = new byte[this.mWidth * this.mHeight * 3 / 2];
+//        yuvBuffer = new byte[getYuvBuffer(mWidth, mHeight)];
+//        rotateYuvBuffer = new byte[getYuvBuffer(mWidth, mHeight)];
+        Log.d(TAG, "===zhongjihao===initVideoEncoder====width: "+mWidth+"  height: "+mHeight);
         vBufferInfo = new MediaCodec.BufferInfo();
         //选择系统用于编码H264的编码器信息
         MediaCodecInfo vCodecInfo = selectCodec(VIDEO_MIME_TYPE);
@@ -140,7 +147,21 @@ public class AVEncoder {
 
         Log.d(TAG, "======zhongjihao====found video codec: " + vCodecInfo.getName());
         //根据MIME格式,选择颜色格式
-        mColorFormat = selectColorFormat(vCodecInfo, VIDEO_MIME_TYPE);
+        selectColorFormat(vCodecInfo, VIDEO_MIME_TYPE);
+
+        for (int i = 0; i < supportColorFormatList.size(); i++) {
+            if (isRecognizedFormat(supportColorFormatList.get(i))) {
+                mColorFormat = supportColorFormatList.get(i);
+                break;
+            }
+        }
+
+        if(mColorFormat == 0){
+            Log.e(TAG,
+                    "==zhongjihao====couldn't find a good color format for " + vCodecInfo.getName()
+                            + " / " + VIDEO_MIME_TYPE);
+            return;
+        }
 
         Log.d(TAG, "=====zhongjihao====found colorFormat: " + mColorFormat);
         //根据MIME创建MediaFormat
@@ -169,32 +190,34 @@ public class AVEncoder {
         Log.d(TAG, String.format("=====zhongjihao=====编码器:%s创建完成", vEncoder.getName()));
     }
 
-    private int selectColorFormat(MediaCodecInfo codecInfo,
-                                  String mimeType) {
+    private void selectColorFormat(MediaCodecInfo codecInfo,
+                                        String mimeType) {
         MediaCodecInfo.CodecCapabilities capabilities = codecInfo
                 .getCapabilitiesForType(mimeType);
+        supportColorFormatList.clear();
         for (int i = 0; i < capabilities.colorFormats.length; i++) {
             int colorFormat = capabilities.colorFormats[i];
-            if (isRecognizedFormat(colorFormat)) {
-                return colorFormat;
-            }
+            Log.d(TAG,
+                    "==zhongjihao====selectColorFormat=====color format: " + colorFormat);
+            supportColorFormatList.add(colorFormat);
         }
-
-        Log.d(TAG,
-                "==zhongjihao====couldn't find a good color format for " + codecInfo.getName()
-                        + " / " + mimeType);
-        return 0; // not reached
     }
 
     private boolean isRecognizedFormat(int colorFormat) {
         switch (colorFormat) {
             // these are the formats we know how to handle for this test
-            case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar:
-            case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420PackedPlanar:
-            case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar:
-            case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420PackedSemiPlanar:
-            case MediaCodecInfo.CodecCapabilities.COLOR_TI_FormatYUV420PackedSemiPlanar:
+            case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar:{//对应Camera预览格式I420(YV21/YUV420P)
                 return true;
+            }
+            case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420PackedPlanar:{////对应Camera预览格式YV12
+                return true;
+            }
+            case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar:{ //对应Camera预览格式NV12
+                return true;
+            }
+            case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420PackedSemiPlanar:{//对应Camera预览格式NV21
+                return true;
+            }
             default:
                 return false;
         }
@@ -359,35 +382,45 @@ public class AVEncoder {
         }
     }
 
-    private int getYuvBuffer(int width, int height) {
-        int yStride = (int) Math.ceil(width / 16.0) * 16;
-        int uvStride = (int) Math.ceil( (yStride / 2) / 16.0) * 16;
-        int ySize = yStride * height;
-        int uvSize = uvStride * height / 2;
-        return ySize + uvSize * 2;
-    }
+//    private int getYuvBuffer(int width, int height) {
+//        int yStride = (int) Math.ceil(width / 16.0) * 16;
+//        int uvStride = (int) Math.ceil( (yStride / 2) / 16.0) * 16;
+//        int ySize = yStride * height;
+//        int uvSize = uvStride * height / 2;
+//        return ySize + uvSize * 2;
+//    }
 
     private void encodeVideoData(byte[] input) {
-        if(mColorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar){
+        //input为Camera预览格式NV21数据
+        if (mColorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar) {
             //nv21格式转为nv12格式
-            Yuv420POperate.NV21ToNV12(input,yuv420,mWidth,mHeight);
-        }else if(mColorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar){
-            //用于NV21格式转换为YUV420P格式
-            Yuv420POperate.NV21toYUV420P(input, yuv420, mWidth, mHeight);
+            YuvEngineWrap.newInstance().Nv21ToNv12(input, yuvBuffer, mWidth, mHeight);
+            YuvEngineWrap.newInstance().Nv12ClockWiseRotate90(yuvBuffer, mWidth, mHeight, rotateYuvBuffer, outWidth, outHeight);
+        } else if (mColorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar) {
+            //用于NV21格式转换为I420(YUV420P)格式
+            YuvEngineWrap.newInstance().Nv21ToI420(input, yuvBuffer, mWidth, mHeight);
+            YuvEngineWrap.newInstance().I420ClockWiseRotate90(yuvBuffer, mWidth, mHeight, rotateYuvBuffer, outWidth, outHeight);
+        } else if (mColorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420PackedSemiPlanar) {
+            System.arraycopy(input, 0, yuvBuffer, 0, mWidth * mHeight * 3 / 2);
+            YuvEngineWrap.newInstance().Nv21ClockWiseRotate90(yuvBuffer, mWidth, mHeight, rotateYuvBuffer, outWidth, outHeight);
+        }else if (mColorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420PackedPlanar) {
+            //用于NV21格式转换为YV12格式
+            YuvEngineWrap.newInstance().Nv21ToYv12(input, yuvBuffer, mWidth, mHeight);
+            YuvEngineWrap.newInstance().Yv12ClockWiseRotate90(yuvBuffer, mWidth, mHeight, rotateYuvBuffer, outWidth, outHeight);
         }
-        Yuv420POperate.YUV420PClockRot90(rotateYuv420, yuv420, mWidth, mHeight);
+
         try {
             //拿到输入缓冲区,用于传送数据进行编码
             ByteBuffer[] inputBuffers = vEncoder.getInputBuffers();
             //得到当前有效的输入缓冲区的索引
             int inputBufferIndex = vEncoder.dequeueInputBuffer(TIMEOUT_USEC);
-            Log.d(TAG, "==1====zhongjihao=====Video===inputBufferIndex: " + inputBufferIndex+"  yuvLen: "+rotateYuv420.length);
+            Log.d(TAG, "==1====zhongjihao=====Video===inputBufferIndex: " + inputBufferIndex+"  yuvLen: "+rotateYuvBuffer.length);
             if (inputBufferIndex >= 0) { //输入缓冲区有效
                 ByteBuffer inputBuffer = inputBuffers[inputBufferIndex];
                 inputBuffer.clear();
                 Log.d(TAG, "===2===zhongjihao=====Video===inputBufferIndex: " + inputBufferIndex+"  capacity: "+inputBuffer.capacity());
                 //往输入缓冲区写入数据
-                inputBuffer.put(rotateYuv420);
+                inputBuffer.put(rotateYuvBuffer);
                 Log.d(TAG, "===3===zhongjihao=====Video===inputBufferIndex: " + inputBufferIndex+"  capacity: "+inputBuffer.capacity()+"  limit: "+inputBuffer.limit());
 
                 //计算pts，这个值是一定要设置的
@@ -396,12 +429,12 @@ public class AVEncoder {
                 if (vEncoderEnd) {
                     //结束时，发送结束标志，在编码完成后结束
                     Log.d(TAG, "=====zhongjihao===send Video Encoder BUFFER_FLAG_END_OF_STREAM====");
-                    vEncoder.queueInputBuffer(inputBufferIndex, 0, rotateYuv420.length,
+                    vEncoder.queueInputBuffer(inputBufferIndex, 0, rotateYuvBuffer.length,
                             pts, MediaCodec.BUFFER_FLAG_END_OF_STREAM);
                 } else {
                     //将缓冲区入队
                     Log.d(TAG, "=====zhongjihao===Video====inputBufferIndex: "+inputBufferIndex+"  pts: "+pts);
-                    vEncoder.queueInputBuffer(inputBufferIndex, 0, rotateYuv420.length,
+                    vEncoder.queueInputBuffer(inputBufferIndex, 0, rotateYuvBuffer.length,
                             pts, 0);
                 }
             }

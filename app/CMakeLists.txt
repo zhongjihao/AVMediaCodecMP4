@@ -11,13 +11,17 @@ cmake_minimum_required(VERSION 3.4.1)
 # Gradle automatically packages shared libraries with your APK.
 
 add_library( # Sets the name of the library.
-             yuv420pUtil
+             yuvengine
 
              # Sets the library as a shared library.
              SHARED
 
              # Provides a relative path to your source file(s).
-             src/main/jni/com_example_apadmin_cameraphoto_Yuv420POperate.cpp )
+             src/main/jni/com_example_apadmin_cameraphoto_YuvOperateJni.cpp
+             src/main/jni/yuvengine/yuvengine.cpp)
+
+# Specifies a path to native header files.
+include_directories(src/main/jni/)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -37,7 +41,7 @@ find_library( # Sets the name of the path variable.
 # build script, prebuilt third-party libraries, or system libraries.
 
 target_link_libraries( # Specifies the target library.
-                       yuv420pUtil
+                       yuvengine
 
                        # Links the target library to the log library
                        # included in the NDK.

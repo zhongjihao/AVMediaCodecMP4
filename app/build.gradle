@@ -3,7 +3,11 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
     defaultConfig {
+        def date = new Date()
+        def formattedDate = date.format('yyMMddHHmm')
         applicationId "com.example.apadmin.cameraphoto"
+        versionCode 100
+        setProperty("archivesBaseName", "v2.3.$versionCode.$formattedDate")
         minSdkVersion 18
         targetSdkVersion 26
         versionCode 1
@@ -11,10 +15,19 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
-                cppFlags "-frtti -fexceptions"
+                cppFlags "-frtti -fexceptions -std=c++11"
+                abiFilters 'armeabi-v7a'
             }
         }
     }
+
+    flavorDimensions "default"
+    productFlavors {
+        ANDROID_MEDIACODEC_MP4 {
+            versionName "$archivesBaseName"+"_$name"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
