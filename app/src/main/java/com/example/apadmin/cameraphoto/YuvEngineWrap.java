@@ -99,6 +99,49 @@ public class YuvEngineWrap {
     }
 
     /**
+     * yuvType yuv类型
+     * startX,startY 开始裁剪的坐标位置
+     * srcYuv 原始YUV数据
+     * srcW,srcH 原始YUV数据的分辨率
+     * tarYuv 存储裁剪的数据
+     * cutW,cutH 裁剪的分辨率
+     **/
+    public void cutCommonYuv(int yuvType, int startX,int startY,byte[] srcYuv, int srcW,int srcH,byte[] tarYuv,int cutW, int cutH){
+        if (cPtr != 0) {
+            YuvOperateJni.cutCommonYuv(cPtr,yuvType,startX,startY,srcYuv,srcW,srcH,tarYuv,cutW,cutH);
+        }
+    }
+
+    /**
+     * yuvType yuv类型
+     * dstBuf 目标BUF
+     * srcYuv 源yuv
+     * srcW  宽
+     * srcH 高
+     * dirty_Y/dirty_UV 冗余数据
+     **/
+    public void getSpecYuvBuffer(int yuvType,byte[] dstBuf, byte[] srcYuv, int srcW, int srcH,int dirty_Y,int dirty_UV){
+        if (cPtr != 0) {
+            YuvOperateJni.getSpecYuvBuffer(cPtr,yuvType,dstBuf,srcYuv,srcW,srcH,dirty_Y,dirty_UV);
+        }
+    }
+
+    /**
+     * yuvType yuv类型
+     * startX,startY 需要添加水印的位置
+     * waterMarkData 水印YUV数据，可以通过读取水印文件获取
+     * waterMarkW,waterMarkH 水印数据的分辨率
+     * yuvData 源YUV图像数据
+     * yuvW,yuvH 源YUV的分辨率
+     **/
+    public void yuvAddWaterMark(int yuvType, int startX, int startY, byte[] waterMarkData,
+                                int waterMarkW, int waterMarkH, byte[] yuvData, int yuvW, int yuvH){
+        if (cPtr != 0) {
+            YuvOperateJni.yuvAddWaterMark(cPtr, yuvType,  startX,  startY, waterMarkData, waterMarkW,  waterMarkH,yuvData,  yuvW,  yuvH);
+        }
+    }
+
+    /**
      * Nv21顺时针旋转90度
      * pNv21     原nv21数据
      * srcWidth  原nv21对应的宽
@@ -124,7 +167,7 @@ public class YuvEngineWrap {
      */
     public void Nv12ClockWiseRotate90(byte[] pNv12,int srcWidth,int srcHeight,byte[] outData,int[] outWidth,int[] outHeight){
         if (cPtr != 0) {
-            YuvOperateJni.Nv21ClockWiseRotate90(cPtr, pNv12, srcWidth, srcHeight,outData,outWidth,outHeight);
+            YuvOperateJni.Nv12ClockWiseRotate90(cPtr, pNv12, srcWidth, srcHeight,outData,outWidth,outHeight);
         }
     }
 
