@@ -19,6 +19,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, VideoGather.CameraOperateCallback,SurfacePreview.PermissionNotify{
     private final static String TAG = "MainActivity";
     private Button btnStart;
@@ -60,12 +63,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mSurfaceHolder.addCallback(mSurfacePreview);
         btnStart.setOnClickListener(this);
 
-        String filePath = Environment
+        String dirPath = Environment
                 .getExternalStorageDirectory()
-                + "/"+"zhongjihao/out.mp4";
-        Log.d(TAG, "===zhongjihao===outfile====创建混合器,保存至:" + filePath);
+                + "/"+"android_recordmp4/";
+        String filePath = dirPath + FileUtil.getMp4FileName(System.currentTimeMillis());
         mediaMuxer = AVmediaMuxer.newInstance();
         mediaMuxer.initMediaMuxer(filePath);
+        Log.d(TAG, "===zhongjihao===oncreat====创建混合器,保存至:" + filePath);
 
         // 版本判断。当手机系统大于 23 时，才有必要去判断权限是否获取
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -101,19 +105,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             isStarted = true;
             if(mediaMuxer == null){
-                String filePath = Environment
+                String dirPath = Environment
                         .getExternalStorageDirectory()
-                        + "/"+"zhongjihao/out.mp4";
-                Log.d(TAG, "===zhongjihao===outfile===创建混合器,保存至:" + filePath);
+                        + "/"+"android_recordmp4/";
+                String filePath = dirPath + FileUtil.getMp4FileName(System.currentTimeMillis());
                 mediaMuxer = AVmediaMuxer.newInstance();
                 mediaMuxer.initMediaMuxer(filePath);
+                Log.d(TAG, "===zhongjihao===onclick===创建混合器,保存至:" + filePath);
             }
+
             //采集音频
             mediaMuxer.startAudioGather();
             //初始化音频编码器
             mediaMuxer.initAudioEncoder();
             //初始化视频编码器
-            mediaMuxer.initVideoEncoder(width,height,frameRate);
+            mediaMuxer.initVideoEncoder(width, height, frameRate);
             //启动编码
             mediaMuxer.startEncoder();
         }
@@ -125,13 +131,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onDestroy();
         if (isStarted) {
             isStarted = false;
-            //停止编码 先要停止编码，然后停止采集
-            mediaMuxer.stopEncoder();
-            //停止音频采集
-            mediaMuxer.stopAudioGather();
-            //释放编码器
-            mediaMuxer.release();
-            mediaMuxer = null;
+            if(mediaMuxer != null){
+                //停止编码 先要停止编码，然后停止采集
+                mediaMuxer.stopEncoder();
+                //停止音频采集
+                mediaMuxer.stopAudioGather();
+                //释放编码器
+                mediaMuxer.release();
+                mediaMuxer = null;
+            }
         }
         VideoGather.getInstance().doStopCamera();
         YuvEngineWrap.newInstance().stopYuvEngine();

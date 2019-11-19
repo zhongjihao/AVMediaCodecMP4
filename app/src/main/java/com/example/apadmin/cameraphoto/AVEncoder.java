@@ -471,8 +471,8 @@ public class AVEncoder {
                 }
 
                 if (vBufferInfo.size != 0) {
-                    byte[] outData = new byte[vBufferInfo.size];
-                    outputBuffer.get(outData);
+//                    byte[] outData = new byte[vBufferInfo.size];
+//                    outputBuffer.get(outData);
 
                     if (null != mCallback && !vEncoderEnd) {
                         mCallback.outputVideoFrame(AVmediaMuxer.TRACK_VIDEO,outputBuffer, vBufferInfo);
@@ -509,7 +509,7 @@ public class AVEncoder {
                 inputBuffer.put(input);
 
                 //计算pts，这个值是一定要设置的
-                long pts = new Date().getTime() * 1000 - presentationTimeUs;
+                long pts = System.currentTimeMillis() * 1000 - presentationTimeUs;
                 if (aEncoderEnd) {
                     //结束时，发送结束标志，在编码完成后结束
                     Log.d(TAG, "=====zhongjihao===send Audio Encoder BUFFER_FLAG_END_OF_STREAM====");
