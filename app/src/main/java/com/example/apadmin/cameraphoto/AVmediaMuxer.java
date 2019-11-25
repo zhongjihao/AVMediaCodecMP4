@@ -128,10 +128,13 @@ public class AVmediaMuxer{
      */
     public void release() {
         mAudioGather.release();
+        mAudioGather = null;
         loop = false;
         if (workThread != null) {
             workThread.interrupt();
         }
+        mVideoGather = null;
+        mAVEncoder = null;
     }
 
     private void startMediaMuxer() {
@@ -176,14 +179,16 @@ public class AVmediaMuxer{
         mVideoGather.setCallback(new VideoGather.Callback() {
             @Override
             public void videoData(byte[] data) {
-                mAVEncoder.putVideoData(data);
+                if (mAVEncoder != null)
+                    mAVEncoder.putVideoData(data);
             }
         });
 
         mAudioGather.setCallback(new AudioGather.Callback() {
             @Override
             public void audioData(byte[] data) {
-                mAVEncoder.putAudioData(data);
+                if (mAVEncoder != null)
+                    mAVEncoder.putAudioData(data);
             }
         });
 

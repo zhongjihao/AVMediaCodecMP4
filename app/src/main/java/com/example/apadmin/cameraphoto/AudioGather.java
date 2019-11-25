@@ -129,6 +129,8 @@ public class AudioGather {
         if(audioRecord != null)
             audioRecord.release();
         audioRecord = null;
+        mCallback = null;
+        mAudioGather = null;
     }
 
     public void setCallback(Callback callback) {

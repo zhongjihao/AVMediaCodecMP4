@@ -19,8 +19,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, VideoGather.CameraOperateCallback,SurfacePreview.PermissionNotify{
     private final static String TAG = "MainActivity";

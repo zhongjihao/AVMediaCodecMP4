@@ -113,7 +113,7 @@ public class VideoGather {
     }
 
     public void doStopCamera() {
-        Log.d(TAG, "=====zhongjihao=======doStopCamera");
+        Log.d(TAG, "doStopCamera-------mCamera: "+mCamera+"   mCameraWrapper: "+mCameraWrapper);
         // 如果camera不为null，释放摄像头
         if (mCamera != null) {
             mCamera.setPreviewCallbackWithBuffer(null);
@@ -124,7 +124,13 @@ public class VideoGather {
             mCamera.release();
             mCamera = null;
         }
-        mContext = null;
+
+        if(mCameraWrapper != null){
+            mCallback = null;
+            cameraCb = null;
+            mContext = null;
+            mCameraWrapper = null;
+        }
     }
 
     private void setCameraParamter(SurfaceHolder surfaceHolder) {

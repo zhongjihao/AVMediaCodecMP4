@@ -206,16 +206,10 @@ public class AVEncoder {
     private boolean isRecognizedFormat(int colorFormat) {
         switch (colorFormat) {
             // these are the formats we know how to handle for this test
-            case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar:{//对应Camera预览格式I420(YV21/YUV420P)
-                return true;
-            }
+            case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar://对应Camera预览格式I420(YV21/YUV420P)
+            case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar: //对应Camera预览格式NV12
+            case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420PackedSemiPlanar://对应Camera预览格式NV21
             case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420PackedPlanar:{////对应Camera预览格式YV12
-                return true;
-            }
-            case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar:{ //对应Camera预览格式NV12
-                return true;
-            }
-            case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420PackedSemiPlanar:{//对应Camera预览格式NV21
                 return true;
             }
             default:
